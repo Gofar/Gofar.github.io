@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ToolBar," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="系统提供的ToolBar功能完善，使用方便。但现在很多APP都要求标题居中显示，ToolBar的样式不符合设计。以前是自己定制一个TitleView，但现在有ToolBar这么好的控件，所以试着在ToolBar的基础上自定义一个。通过阅读ToolBar的源码，成功达到了目标。ToolBar继承自ViewGroup,所以是可以往里面加入View的，同时有一个内部类LayoutParams，支持Gra">
+<meta name="keywords" content="ToolBar">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义标题居中的ToolBar">
+<meta property="og:url" content="http://yoursite.com/2017/08/09/Title-centered-ToolBar/index.html">
+<meta property="og:site_name" content="Gofar&#39;s Blogs">
+<meta property="og:description" content="系统提供的ToolBar功能完善，使用方便。但现在很多APP都要求标题居中显示，ToolBar的样式不符合设计。以前是自己定制一个TitleView，但现在有ToolBar这么好的控件，所以试着在ToolBar的基础上自定义一个。通过阅读ToolBar的源码，成功达到了目标。ToolBar继承自ViewGroup,所以是可以往里面加入View的，同时有一个内部类LayoutParams，支持Gra">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/Gofar/TitleBar/raw/master/screenshots/device-2017-05-12-154136.png">
+<meta property="og:image" content="https://github.com/Gofar/TitleBar/raw/master/screenshots/device-2017-05-12-161217.png">
+<meta property="og:image" content="https://github.com/Gofar/TitleBar/raw/master/screenshots/device-2017-05-12-161249.png">
+<meta property="og:image" content="https://github.com/Gofar/TitleBar/raw/master/screenshots/device-2017-05-12-161311.png">
+<meta property="og:updated_time" content="2017-08-09T14:41:58.294Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自定义标题居中的ToolBar">
+<meta name="twitter:description" content="系统提供的ToolBar功能完善，使用方便。但现在很多APP都要求标题居中显示，ToolBar的样式不符合设计。以前是自己定制一个TitleView，但现在有ToolBar这么好的控件，所以试着在ToolBar的基础上自定义一个。通过阅读ToolBar的源码，成功达到了目标。ToolBar继承自ViewGroup,所以是可以往里面加入View的，同时有一个内部类LayoutParams，支持Gra">
+<meta name="twitter:image" content="https://github.com/Gofar/TitleBar/raw/master/screenshots/device-2017-05-12-154136.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'lcf'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/08/09/Title-centered-ToolBar/"/>
+
+
+
+
+
+  <title>自定义标题居中的ToolBar | Gofar's Blogs</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c939025637e1b7fe83743e2469ccfd6f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Gofar's Blogs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/09/Title-centered-ToolBar/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Gofar">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gofar's Blogs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">自定义标题居中的ToolBar</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-09T22:13:55+08:00">
+                2017-08-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/UI/" itemprop="url" rel="index">
+                    <span itemprop="name">UI</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/08/09/Title-centered-ToolBar/" class="leancloud_visitors" data-flag-title="自定义标题居中的ToolBar">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>系统提供的ToolBar功能完善，使用方便。但现在很多APP都要求标题居中显示，ToolBar的样式不符合设计。以前是自己定制一个TitleView，但现在有ToolBar这么好的控件，所以试着在ToolBar的基础上自定义一个。通过阅读ToolBar的源码，成功达到了目标。ToolBar继承自ViewGroup,所以是可以往里面加入View的，同时有一个内部类LayoutParams，支持Gravity属性，所以我们使用LayoutParams设置加入ToolBar的View的属性。最终自定义了一个TitleBar，可以标题居中，可以往左边、中间、右边添加自定义View。<br><a id="more"></a></p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>源码地址：”<a href="https://github.com/Gofar/TitleBar" target="_blank" rel="external">https://github.com/Gofar/TitleBar</a>“</p>
+<p>可以将TitleBar.java复制到自己的项目中</p>
+<h2 id="Simple-Code"><a href="#Simple-Code" class="headerlink" title="Simple Code"></a>Simple Code</h2><p>在xml直接使用<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="utf-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">LinearLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></div><div class="line"><span class="tag">    <span class="attr">xmlns:app</span>=<span class="string">"http://schemas.android.com/apk/res-auto"</span></span></div><div class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></div><div class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></div><div class="line"><span class="tag">    <span class="attr">android:orientation</span>=<span class="string">"vertical"</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">com.lcf.titlebar.widget.TitleBar</span></span></div><div class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">"@+id/title_bar"</span></span></div><div class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></div><div class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">"?attr/actionBarSize"</span></span></div><div class="line"><span class="tag">        <span class="attr">android:background</span>=<span class="string">"?attr/colorPrimary"</span></span></div><div class="line"><span class="tag">        <span class="attr">app:popupTheme</span>=<span class="string">"@style/AppTheme.PopupOverlay"</span></span></div><div class="line"><span class="tag">        <span class="attr">app:theme</span>=<span class="string">"@style/ToolBarTheme"</span> /&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">FrameLayout</span></span></div><div class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">"@+id/content"</span></span></div><div class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></div><div class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">LinearLayout</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>在代码中应用<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CenterTitleActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(@Nullable Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_base);</div><div class="line">        TitleBar mTitleBar = (TitleBar) findViewById(R.id.title_bar);</div><div class="line">        setSupportActionBar(mTitleBar);</div><div class="line">        getSupportActionBar().setDisplayShowTitleEnabled(<span class="keyword">false</span>);</div><div class="line"></div><div class="line">        mTitleBar.setCenterTitle(<span class="string">"Title"</span>);</div><div class="line">        mTitleBar.setNavigationIcon(R.drawable.ic_action_back);</div><div class="line">        mTitleBar.setNavigationOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</div><div class="line">                onBackPressed();</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h2><p><img src="https://github.com/Gofar/TitleBar/raw/master/screenshots/device-2017-05-12-154136.png" alt="image"><br><img src="https://github.com/Gofar/TitleBar/raw/master/screenshots/device-2017-05-12-161217.png" alt="image"><br><img src="https://github.com/Gofar/TitleBar/raw/master/screenshots/device-2017-05-12-161249.png" alt="image"><br><img src="https://github.com/Gofar/TitleBar/raw/master/screenshots/device-2017-05-12-161311.png" alt="image"></p>
+<h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><p>ToolBar继承自ViewGroup,所以是可以往里面加入View的，同时有一个内部类LayoutParams，支持Gravity属性，所以我们使用LayoutParams设置加入ToolBar的View的属性。</p>
+<h2 id="居中的标题"><a href="#居中的标题" class="headerlink" title="居中的标题"></a>居中的标题</h2><p>ToolBar本身可以设置标题，如果我们想要让自己的居中的标题与ToolBar自带标题样式一致，我们可以参考ToolBar生成居中的标题。<br>居中标题主要有以下属性：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line">     * 居中标题</div><div class="line">     */</div><div class="line">    private TextView mCenterTextView;</div><div class="line">    /**</div><div class="line">     * 居中标题的TitleTextAppearance</div><div class="line">     */</div><div class="line">    private int mCenterTitleTextAppearance;</div><div class="line">    /**</div><div class="line">     * 居中标题的颜色</div><div class="line">     */</div><div class="line">    private int mCenterTitleTextColor;</div><div class="line">    /**</div><div class="line">     * 居中标题的文本</div><div class="line">     */</div><div class="line">    private CharSequence mCenterTitle;</div></pre></td></tr></table></figure></p>
+<p>首先，我们需要读取ToolBar自带标题的属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 读取ToolBar的默认标题属性</div><div class="line"> *</div><div class="line"> * @param attrs        AttributeSet</div><div class="line"> * @param defStyleAttr defStyleAttr</div><div class="line"> */</div><div class="line">private void resolveAttrs(AttributeSet attrs, int defStyleAttr) &#123;</div><div class="line">    // Need to use getContext() here so that we use the themed context</div><div class="line">    final TintTypedArray a = TintTypedArray.obtainStyledAttributes(getContext(), attrs,</div><div class="line">            R.styleable.Toolbar, defStyleAttr, 0);</div><div class="line">    mCenterTitleTextAppearance = a.getResourceId(R.styleable.Toolbar_titleTextAppearance, 0);</div><div class="line">    mCenterTitleTextColor = a.getColor(R.styleable.Toolbar_titleTextColor, 0xffffffff);</div><div class="line">    a.recycle();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>标题mCenterTextView是一个TextView，在设置标题文本时如果为null就创建一个AppCompatTextView，将属性mCenterTitleTextAppearance和文字颜色mCenterTitleTextColor设置给mCenterTextView。setCenterTitle()方法设置居中标题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 设置居中标题</div><div class="line"> *</div><div class="line">     * @param resId Resource ID of a string to set as the title</div><div class="line">     */</div><div class="line">    public void setCenterTitle(@StringRes int resId) &#123;</div><div class="line">        setCenterTitle(getContext().getString(resId));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 设置居中标题</div><div class="line">     * 模仿ToolBar中的写法,样式与ToolBar中标题一致</div><div class="line">     *</div><div class="line">     * @param title 标题文本</div><div class="line">     */</div><div class="line">    public void setCenterTitle(CharSequence title) &#123;</div><div class="line">        if (!TextUtils.isEmpty(title)) &#123;</div><div class="line">            if (mCenterTextView == null) &#123;</div><div class="line">                Context context = getContext();</div><div class="line">                mCenterTextView = new AppCompatTextView(context);</div><div class="line">                mCenterTextView.setSingleLine();</div><div class="line">                mCenterTextView.setEllipsize(TextUtils.TruncateAt.END);</div><div class="line">                if (mCenterTitleTextAppearance != 0) &#123;</div><div class="line">                    mCenterTextView.setTextAppearance(context, mCenterTitleTextAppearance);</div><div class="line">                &#125;</div><div class="line">                if (mCenterTitleTextColor != 0) &#123;</div><div class="line">                    mCenterTextView.setTextColor(mCenterTitleTextColor);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            if (mCenterTextView.getParent() != this) &#123;</div><div class="line">                addCenterView(mCenterTextView);</div><div class="line">            &#125;</div><div class="line">        &#125; else if (mCenterTextView != null &amp;&amp; mCenterTextView.getParent() == this) &#123;</div><div class="line">            // mCenterTextView已添加时，若设置title为空,就移除mCenterTextView</div><div class="line">            removeView(mCenterTextView);</div><div class="line">        &#125;</div><div class="line">        if (mCenterTextView != null) &#123;</div><div class="line">            mCenterTextView.setText(title);</div><div class="line">        &#125;</div><div class="line">        mCenterTitle = title;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h2 id="居中的自定义View"><a href="#居中的自定义View" class="headerlink" title="居中的自定义View"></a>居中的自定义View</h2><p>在实际开发总有其他一些情况，在ToolBar中间不是一个标题，这时我们可以将自定义View放到ToolBar中间。addCenterView()方法将View加到ToolBar中间：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line">    * 添加一个居中的View</div><div class="line">    * 有时候ToolBar中间不是文本，是一个其他View,或想显示自定义居中标题的View,可以在这里传入一个View</div><div class="line">    * 不与 &#123;@link #setCenterTitle(CharSequence)&#125; 同时使用</div><div class="line">    *</div><div class="line">    * @param view 放在中间的View</div><div class="line">    */</div><div class="line">   public void addCenterView(View view) &#123;</div><div class="line">       addCustomView(view, Gravity.CENTER);</div><div class="line">   &#125;</div><div class="line">   /**</div><div class="line">    * 添加自定义View</div><div class="line">    *</div><div class="line">    * @param v       view</div><div class="line">    * @param gravity gravity</div><div class="line">    */</div><div class="line">   private void addCustomView(View v, int gravity) &#123;</div><div class="line">       ViewGroup.LayoutParams vlp = v.getLayoutParams();</div><div class="line">       LayoutParams vlp;</div><div class="line">       if (vlp == null) &#123;</div><div class="line">           lp = generateDefaultLayoutParams(gravity);</div><div class="line">       &#125; else if (!checkLayoutParams(vlp)) &#123;</div><div class="line">           lp = generateLayoutParams(vlp, gravity);</div><div class="line">       &#125; else &#123;</div><div class="line">           lp = (LayoutParams) vlp;</div><div class="line">       &#125;</div><div class="line">       addView(v, lp);</div><div class="line">   &#125;</div><div class="line">    /**</div><div class="line">    * 创建&#123;@link LayoutParams&#125;</div><div class="line">    * 用于指定添加到ToolBar的View的位置</div><div class="line">    *</div><div class="line">    * @param gravity CENTER,LEFT,RIGHT</div><div class="line">    * @return LayoutParams</div><div class="line">    */</div><div class="line">   private LayoutParams generateDefaultLayoutParams(int gravity) &#123;</div><div class="line">       return new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, gravity);</div><div class="line">   &#125;</div><div class="line"></div><div class="line">   /**</div><div class="line">    * 创建&#123;@link LayoutParams&#125;</div><div class="line">    * 用于指定添加到ToolBar的View的位置</div><div class="line">    *</div><div class="line">    * @param lp      view的LayoutParams</div><div class="line">    * @param gravity CENTER,LEFT,RIGHT</div><div class="line">    * @return LayoutParams</div><div class="line">    */</div><div class="line">   private LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp, int gravity) &#123;</div><div class="line">       LayoutParams layoutParams;</div><div class="line">       if (lp instanceof LayoutParams) &#123;</div><div class="line">           layoutParams = new LayoutParams((LayoutParams) lp);</div><div class="line">       &#125; else if (lp instanceof ActionBar.LayoutParams) &#123;</div><div class="line">           layoutParams = new LayoutParams((ActionBar.LayoutParams) lp);</div><div class="line">       &#125; else if (lp instanceof MarginLayoutParams) &#123;</div><div class="line">           layoutParams = new LayoutParams((MarginLayoutParams) lp);</div><div class="line">       &#125; else &#123;</div><div class="line">           layoutParams = new LayoutParams(lp);</div><div class="line">       &#125;</div><div class="line">       layoutParams.gravity = gravity;</div><div class="line">       return layoutParams;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>我们主要看下addCustomView()方法，有两个参数：自定义view和要放在ToolBar中的位置gravity。利用自定义view的LayoutParams属性vlp，生产我们添加view时的LayoutParams属性lp。代码调用如下：</p>
+<ol>
+<li>拿到view的LayoutParams属性vlp</li>
+<li>首先判断如果vlp为null，就调用generateDefaultLayoutParams()创建默认lp。</li>
+<li>然后调用ToolBar的方法checkLayoutParams检测vlp不为空并且是LayoutParams，就利用vlp创建lp。generateLayoutParams()会根据vlp的类型创建lp。</li>
+<li>前面的判断都不满足时就将vlp强转为lp。</li>
+</ol>
+<p>可以看到这里的关键就是创建加入ToolBar的view的LayoutParams。</p>
+<h2 id="左边或右边的自定义的View"><a href="#左边或右边的自定义的View" class="headerlink" title="左边或右边的自定义的View"></a>左边或右边的自定义的View</h2><p>同样，如果想将自定义view加到ToolBar的左边或右边，只需指定Gravity就行。addLeftView()和addRightView()可以将多个view加到左边、或右边。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line">     * 添加一个左边的View</div><div class="line">     * 左边是一个图片按钮时可以直接使用&#123;@link #setNavigationIcon(int)&#125;</div><div class="line">     * 若想放一个自定义View，可以使用此方法</div><div class="line">     *</div><div class="line">     * @param views 想要依次排列的View</div><div class="line">     */</div><div class="line">    public void addLeftView(View... views) &#123;</div><div class="line">        if (views == null) &#123;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        for (View view : views) &#123;</div><div class="line">            if (view != null) &#123;</div><div class="line">                addCustomView(view, Gravity.LEFT);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 添加一个右边的View</div><div class="line">     * ToolBar右边菜单可以使用Menu，若想展示自己的样式，</div><div class="line">     * 可以使用&#123;@link android.view.MenuItem#setActionView(int)&#125;</div><div class="line">     * 或&#123;@link android.view.MenuItem#setActionView(View)&#125;这两个方法将自定义View展示在Menu上</div><div class="line">     * 也可以使用本方法往右边添加自定义View</div><div class="line">     *</div><div class="line">     * @param views 想要依次排列的View</div><div class="line">     */</div><div class="line">    public void addRightView(View... views) &#123;</div><div class="line">        if (views == null) &#123;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        for (View view : views) &#123;</div><div class="line">            if (view != null) &#123;</div><div class="line">                addCustomView(view, Gravity.RIGHT);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<h3 id="右边的View"><a href="#右边的View" class="headerlink" title="右边的View"></a>右边的View</h3><p>往右边添加view可以优先考虑用menu实现，符合MD风格。app:actionLayout为menu指定一个自定义view：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;menu xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</div><div class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;&gt;</div><div class="line"></div><div class="line">    &lt;item</div><div class="line">        android:id=&quot;@+id/m_filter&quot;</div><div class="line">        android:title=&quot;筛选&quot;</div><div class="line">        android:titleCondensed=&quot;&quot;</div><div class="line">        app:actionLayout=&quot;@layout/view_filter&quot;</div><div class="line">        app:showAsAction=&quot;always&quot; /&gt;</div><div class="line"></div><div class="line">&lt;/menu&gt;</div></pre></td></tr></table></figure>
+<p>在onCreateOptionsMenu处理自定义view的点击事件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public boolean onCreateOptionsMenu(Menu menu) &#123;</div><div class="line">    getMenuInflater().inflate(R.menu.menu_main_filter, menu);</div><div class="line">    menu.findItem(R.id.m_filter).getActionView().setOnClickListener(new View.OnClickListener() &#123;</div><div class="line">            @Override</div><div class="line">            public void onClick(View v) &#123;</div><div class="line">               // do some thing</div><div class="line">            &#125;</div><div class="line">    &#125;);</div><div class="line">    return true;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="左边的View"><a href="#左边的View" class="headerlink" title="左边的View"></a>左边的View</h3><p>往ToolBar左边添加view时，由于ToolBar默认会有一些间距，需要调整一下。首先看下ToolBar的默认属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;style name=&quot;Widget.Toolbar&quot;&gt;</div><div class="line">    &lt;item name=&quot;titleTextAppearance&quot;&gt;@style/TextAppearance.Widget.Toolbar.Title&lt;/item&gt;</div><div class="line">    &lt;item name=&quot;subtitleTextAppearance&quot;&gt;@style/TextAppearance.Widget.Toolbar.Subtitle&lt;/item&gt;</div><div class="line">    &lt;item name=&quot;minHeight&quot;&gt;?attr/actionBarSize&lt;/item&gt;</div><div class="line">    &lt;item name=&quot;titleMargin&quot;&gt;4dp&lt;/item&gt;</div><div class="line">    &lt;item name=&quot;maxButtonHeight&quot;&gt;@dimen/action_bar_default_height_material&lt;/item&gt;</div><div class="line">    &lt;item name=&quot;buttonGravity&quot;&gt;top&lt;/item&gt;</div><div class="line">    &lt;item name=&quot;navigationButtonStyle&quot;&gt;@style/Widget.Toolbar.Button.Navigation&lt;/item&gt;</div><div class="line">    &lt;item name=&quot;collapseIcon&quot;&gt;?attr/homeAsUpIndicator&lt;/item&gt;</div><div class="line">    &lt;item name=&quot;collapseContentDescription&quot;&gt;@string/toolbar_collapse_description&lt;/item&gt;</div><div class="line">    &lt;item name=&quot;contentInsetStart&quot;&gt;16dp&lt;/item&gt;</div><div class="line">    &lt;item name=&quot;contentInsetStartWithNavigation&quot;&gt;@dimen/action_bar_content_inset_with_nav&lt;/item&gt;</div><div class="line">    &lt;item name=&quot;touchscreenBlocksFocus&quot;&gt;true&lt;/item&gt;</div><div class="line">&lt;/style&gt;</div></pre></td></tr></table></figure>
+<p>==contentInsetStart==是左边的间距，默认是16dp。当我们往左边加入view时，使用   mTitleBar.setContentInsetsRelative(0, mTitleBar.getCurrentContentInsetEnd())将该间距设为0。</p>
+<p>==contentInsetStartWithNavigation==是NavigationIcon与其右边的view距离，默认是72dp。当ToolBar已经设置NavigationIcon时，往左边加入view会放在ToolBar右边，使用mTitleBar.setContentInsetStartWithNavigation(0)方法设置间距为0。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ToolBar/" rel="tag"># ToolBar</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Gofar" />
+          <p class="site-author-name" itemprop="name">Gofar</p>
+           
+              <p class="site-description motion-element" itemprop="description">分享知识，提升自己</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用"><span class="nav-number">1.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Simple-Code"><span class="nav-number">2.</span> <span class="nav-text">Simple Code</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#效果图"><span class="nav-number">3.</span> <span class="nav-text">效果图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现原理"><span class="nav-number">4.</span> <span class="nav-text">实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#居中的标题"><span class="nav-number">5.</span> <span class="nav-text">居中的标题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#居中的自定义View"><span class="nav-number">6.</span> <span class="nav-text">居中的自定义View</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#左边或右边的自定义的View"><span class="nav-number">7.</span> <span class="nav-text">左边或右边的自定义的View</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#右边的View"><span class="nav-number">7.1.</span> <span class="nav-text">右边的View</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#左边的View"><span class="nav-number">7.2.</span> <span class="nav-text">左边的View</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Gofar</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("y6w9WnxNtG00WfMgiA6AUrKm-gzGzoHsz", "kTjOeBT1n7s1IHSy7qCrRRUy");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
